@@ -69,7 +69,7 @@ class Comment(models.Model):
     )
 
     text = models.TextField(max_length=400)
-    created = models.DateTimeField(
+    created_on = models.DateTimeField(
         'date published',
         auto_now_add=True,
     )
