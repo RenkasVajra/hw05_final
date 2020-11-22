@@ -98,7 +98,7 @@ class Follow(models.Model):
     
     class Meta:
         models.UniqueConstraint(
-            fields=['author', 'user'], 
+            fields=('author', 'user'), 
             name='followint_unique'
         )
         

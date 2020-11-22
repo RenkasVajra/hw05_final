@@ -169,7 +169,6 @@ def profile_unfollow(request, username):
         
 
 def page_not_found(request, exception):
-    
     return render(
         request, 
         "misc/404.html", 
@@ -179,6 +178,5 @@ def page_not_found(request, exception):
 
 
 def server_error(request):
-
     return render(request, "misc/500.html", status=500)
     
