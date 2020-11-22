@@ -27,20 +27,10 @@ class TestIndex_Cache(TransactionTestCase):
         )
 
     def test_cache(self):
-        response_before = self.authorized_client.get(reverse('index'))
-        group = Group.objects.create(
-            title='Title group',
-            slug='test group',
-            description='group for tests'
-        )
-        group.save()
-        post = Post.objects.create(
-            text='TextText', 
-            author=self.user,
-            group=self.group
-        )
-        response_after = self.authorized_client.get(reverse('index'),)
-        self.assertEqual(response_before.content, response_after.content)
-        cache.touch(self.key, 0)
-        response_last = self.authorized_client.get(reverse('index'),)
-        self.assertNotEqual(response_before.content, response_last.content)
+        first = self.authorized_client.get(reverse('index'))
+        Post.objects.create(text='Cache check', author=self.user)
+        second = self.authorized_client.get(reverse('index'))
+        cache.clear()
+        third = self.authorized_client.get(reverse('index'))
+        self.assertEqual(first.content, second.content)
+        self.assertNotEqual(second.content, third.content)

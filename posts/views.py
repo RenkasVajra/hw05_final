@@ -85,7 +85,7 @@ def post_view(request, username, post_id):
     authors_posts = author.posts.all() 
     count = authors_posts.count()
     form = CommentForm()
-    comments = post.comment_post.all()
+    comments = post.comments.all()
     context = {
         'count': count,
         'author': post.author,
@@ -181,3 +181,4 @@ def page_not_found(request, exception):
 def server_error(request):
 
     return render(request, "misc/500.html", status=500)
+    

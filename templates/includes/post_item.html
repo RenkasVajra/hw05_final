@@ -21,7 +21,6 @@
         <strong class="d-block text-gray-dark">#{{ post.group.title }}</strong>
       </a>
       {% endif %}
-  
       <!-- Отображение ссылки на комментарии -->
       <div class="d-flex justify-content-between align-items-center">
         <div class="btn-group">
@@ -30,6 +29,7 @@
             Комментариев: {{ post.comments.count }}
           </div>
           {% endif %}
+
           <a class="btn btn-sm btn-primary" href="{% url 'post' post.author.username post.id %}" role="button">
             Добавить комментарий
           </a>

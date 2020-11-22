@@ -8,7 +8,7 @@ from posts.models import Comment, Follow, Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['group', 'text', 'image'] 
+        fields = ('group', 'text', 'image',)
         labels = {
             'group': 'Группа',
             'text': 'Текст',
@@ -19,12 +19,12 @@ class PostForm(forms.ModelForm):
 class CommentForm(ModelForm):
     class Meta:
         model = Comment
-        fields = ['text']
+        fields = ('text',)
         labels = {'text': 'Комментарий'}
         widgets = {'text': forms.Textarea({'rows': 3}),}
 
 
 class FollowForm(ModelForm):
     model = Follow
-    fields = ['author', 'user']
+    fields = ('author', 'user',)
     

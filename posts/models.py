@@ -59,13 +59,13 @@ class Comment(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name="comment_post"
+        related_name="comments"
     )
 
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="comment_author"
+        related_name="comments"
     )
 
     text = models.TextField(max_length=400)
@@ -101,3 +101,4 @@ class Follow(models.Model):
             fields=['author', 'user'], 
             name='followint_unique'
         )
+        

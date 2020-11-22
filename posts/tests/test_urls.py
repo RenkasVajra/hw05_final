@@ -27,7 +27,7 @@ class StaticURLTests(TestCase):
             title='Test',
             slug='Testing_group',
             description='From England with bad tests',
-        )
+            )
         cls.post = Post.objects.create(text='Text text text',
                                        author=cls.user,
                                        group=cls.group,
@@ -37,7 +37,8 @@ class StaticURLTests(TestCase):
         
         response = self.unauthorized_client.get(reverse(
             'index',
-        ))
+        ),
+        )
         self.assertEqual(response.status_code, 200)
     
     def test_post_edit(self):
@@ -46,7 +47,9 @@ class StaticURLTests(TestCase):
         response = self.authorized_client.get(reverse(
                 'post_edit',
                 kwargs={'username': self.user,
-                        'post_id': self.post.pk, }),
+                        'post_id': self.post.pk,
+                        }
+                    ),
                         follow=True
                     )
         self.assertEqual(
@@ -67,7 +70,8 @@ class StaticURLTests(TestCase):
             response.status_code,
             200,
             'Персональная страница не создается после регистрации'
-            )      
+        )
+
     def test_page_not_found(self):
         response = self.authorized_client.get('404_error')
         self.assertEqual(response.status_code,404)
