@@ -31,7 +31,7 @@ def group_posts(request, slug):
     ) 
 
 
-@cache_page(1 * 20, key_prefix="index_page")
+@cache_page(1 * 20, key_prefix='index_page')
 def index(request):
     post_list = Post.objects.all()
     paginator = Paginator(post_list, 10)
@@ -168,15 +168,15 @@ def profile_unfollow(request, username):
     return redirect('profile', username=username)
         
 
-def page_not_found(request, exception):
+def page_not_found(request, exception):   
     return render(
         request, 
-        "misc/404.html", 
+        'misc/404.html', 
         {"path": request.path}, 
         status=404
     )
 
 
 def server_error(request):
-    return render(request, "misc/500.html", status=500)
+    return render(request, 'misc/500.html', status=500)
     

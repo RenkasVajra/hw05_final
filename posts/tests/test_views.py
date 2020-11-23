@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core.files.base import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from posts.models import Post, Group, User, Follow
+from posts.models import Comment, Follow, Group, Post, User
 
 
 class ViewsTest(TestCase):
@@ -165,19 +165,25 @@ class ViewsTest(TestCase):
         )
 
     def test_auth_comment(self):
-
         comment_text = 'Какой-то текст'
         response = self.authorized_client.post(
             reverse('add_comment', args=[
-                self.post_new.author,
-                self.post_new.pk]),
+                    self.post_new.author,
+                    self.post_new.pk]),
             {'text': comment_text},
-            follow=True
-        )
+            follow=True,
+            )
+        count = response.context['comments'].count()
         self.assertIn(
             comment_text,
             [comment.text for comment in response.context['comments']]
         )
+        self.assertEqual(self.post_new.author, self.user)
+        self.assertEqual(Comment.objects.filter(
+            text=comment_text, 
+            author=self.post_new.author,
+            post=self.post_new
+        ).count(), 1)
 
     def test_view_post_with_follow(self):
         self.authorized_client.get(reverse(
@@ -198,23 +204,18 @@ class ViewsTest(TestCase):
             text='Новый Текст', author=self.second_user)
         Follow.objects.create(author=self.second_user,
                               user=self.user)
-        with self.subTest(
-                msg='Проверьте следующий пост'
-                    ' автора на странице follow_index'):
-            response = self.authorized_client.get(reverse('follow_index'))
-            self.assertIn(
+
+        response = self.authorized_client.get(reverse('follow_index'))
+        self.assertIn(
                 test_post, response.context['page'])
-        with self.subTest(
-                msg='Проверьте следующий пост'
-                    ' автора на странице follow_index'):
-            Follow.objects.filter(
+        Follow.objects.filter(
                 author=self.second_user,
                 user=self.user).delete()
-            response = self.authorized_client.get(reverse('follow_index'))
-            self.assertNotIn(
+        response = self.authorized_client.get(reverse('follow_index'))
+        self.assertNotIn(
                 test_post, response.context['page'])
 
-    def unfollow_test(self):
+    def test_unfollow(self):
         self.client.get(
             reverse('profile_unfollow', args=[
                 self.second_user.username]

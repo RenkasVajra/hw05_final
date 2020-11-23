@@ -1,10 +1,8 @@
 <div class="card-body">
         <div class="h2">
-          <!-- Имя автора -->
           {{ author.get_full_name }}
         </div>
         <div class="h3 text-muted">
-          <!-- username автора -->
           {{ author.username }}
         </div>
       </div>
@@ -17,7 +15,6 @@
         </li>
         <li class="list-group-item">
           <div class="h6 text-muted">
-            <!--Количество записей -->
             Записей: {{ author.posts.count }}
           </div>
         </li>
