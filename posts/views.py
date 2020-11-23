@@ -149,7 +149,7 @@ def follow_index(request):
         'page': page,
         'paginator': paginator,
     }
-    return render(request, 'follow.html', context)
+    return render(request, 'follow.html', context)  
 
     
 @login_required

@@ -178,12 +178,13 @@ class ViewsTest(TestCase):
             comment_text,
             [comment.text for comment in response.context['comments']]
         )
-        self.assertEqual(self.post_new.author, self.user)
-        self.assertEqual(Comment.objects.filter(
+        comment_filter = Comment.objects.filter(
             text=comment_text, 
             author=self.post_new.author,
             post=self.post_new
-        ).count(), 1)
+        ).count()
+        self.assertEqual(self.post_new.author, self.user)
+        self.assertEqual(comment_filter, 1)
 
     def test_view_post_with_follow(self):
         self.authorized_client.get(reverse(
