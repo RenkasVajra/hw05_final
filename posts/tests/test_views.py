@@ -147,9 +147,6 @@ class ViewsTest(TestCase):
     
     def test_post_form_txt_file(self):
         cache.clear()
-        """
-        Testing create post form with txt file
-        """
         post_text = 'Текст'
         response = self.authorized_client.post(
             reverse('new_post'),
