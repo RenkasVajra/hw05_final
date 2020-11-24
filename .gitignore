@@ -24,4 +24,4 @@ media
 db.sqlite3
 
 
-some_file.txt
+posts/some_file.txt

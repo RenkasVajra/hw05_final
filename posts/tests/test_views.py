@@ -145,26 +145,34 @@ class ViewsTest(TestCase):
                     post = response.context['post']
                 self.assertContains(response, '<img', status_code=200)
     
-    def test_img_format(self):
-        with open('posts/some_file.txt', 'rb') as isnt_img:
-            response = self.authorized_client.post(reverse('new_post'), {   
-                'group': self.group,
-                'author': self.user, 
-                'text': 'post with image', 
-                'image': isnt_img
-            },
-                follow=True
-            )
+    def test_post_form_txt_file(self):
+        cache.clear()
+        """
+        Testing create post form with txt file
+        """
+        post_text = 'Текст'
+        response = self.authorized_client.post(
+            reverse('new_post'),
+            {'text': post_text,
+             'group': self.group.pk,
+             'image': SimpleUploadedFile(
+                name='test_txt.txt',
+                content=b'These are the file contents',
+                content_type='text/plain'),
+             },
+             )
+        self.assertFalse(Post.objects.filter(text__exact=post_text).exists(),
+                         'Post was created with txt file instead image')
         self.assertFormError(
-            response,
-            'form',
-            'image',
-            'Загрузите правильное изображение. '
-            'Файл, который вы загрузили, поврежден или не является ' 
-            'изображением.'
-        )
+            response, 'form', 'image',
+            ['Загрузите правильное изображение. Файл, который вы загрузили, '
+             'поврежден или не является изображением.'],
+            msg_prefix='New-post form is valid with .txt file')
+        self.assertEqual(
+            response.context['form'].cleaned_data['text'], post_text,
+            'Retry option is impossible. The PostForm is broken')
 
-    def test_auth_comment(self):
+    def test_authorized_comment(self):
         comment_text = 'Какой-то текст'
         response = self.authorized_client.post(
             reverse('add_comment', args=[
@@ -173,18 +181,28 @@ class ViewsTest(TestCase):
             {'text': comment_text},
             follow=True,
             )
-        count = response.context['comments'].count()
-        self.assertIn(
-            comment_text,
-            [comment.text for comment in response.context['comments']]
-        )
-        comment_filter = Comment.objects.filter(
+        actual_comment_number = Comment.objects.filter(
             text=comment_text, 
             author=self.post_new.author,
             post=self.post_new
         ).count()
-        self.assertEqual(self.post_new.author, self.user)
-        self.assertEqual(comment_filter, 1)
+        self.assertEqual( 
+            comment_text, 
+            response.context['comments'][0].text
+        ) 
+        self.assertEqual(actual_comment_number, 1)
+
+    def test_unatuhorized_comment(self):
+        comment_text = 'Какой-то текст'
+        response = self.unauthorized_client.post(
+            reverse('add_comment', args=[
+                    self.post_new.author,
+                    self.post_new.pk]),
+            {'text': comment_text},
+            follow=True,
+            )
+        actual_comment_number = Comment.objects.count()
+        self.assertEqual(actual_comment_number, 0)
 
     def test_view_post_with_follow(self):
         self.authorized_client.get(reverse(
